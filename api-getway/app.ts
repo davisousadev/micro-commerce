@@ -5,7 +5,6 @@ const app = Fastify({
   logger: true,
 });
 
-// Gateway simple GET health route
 app.get("/health", async (request, reply) => {
   return {
     status: "ok",
@@ -14,7 +13,6 @@ app.get("/health", async (request, reply) => {
   };
 });
 
-// Products Gateway Routes (forward /produtos and /produtos/* to http://localhost:3001)
 app.register(async (produtosInstance) => {
   produtosInstance.register(replyFrom, {
     base: "http://localhost:3001",
@@ -29,22 +27,20 @@ app.register(async (produtosInstance) => {
   });
 });
 
-// Orders Gateway Routes (forward /pedidos and /pedidos/* to http://localhost:3002)
 app.register(async (pedidosInstance) => {
   pedidosInstance.register(replyFrom, {
     base: "http://localhost:3002",
   });
 
-  pedidosInstance.all("/pedidos", (request, reply) => {
+  pedidosInstance.all("/order", (request, reply) => {
     reply.from(request.url);
   });
 
-  pedidosInstance.all("/pedidos/*", (request, reply) => {
+  pedidosInstance.all("/order/*", (request, reply) => {
     reply.from(request.url);
   });
 });
 
-// Start the gateway
 const start = async () => {
   try {
     await app.listen({ port: 3000, host: "0.0.0.0" });
