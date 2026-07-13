@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { CreateOrderInput } from "../schemas/order.schema";
 import { Order } from "../model/order.model";
+import amqp from 'amqplib';
 
 const PRODUCT_SERVICE_URL = 'http://127.0.0.1:3001';
 
@@ -31,6 +32,11 @@ export const createOrder = async (request: FastifyRequest<{ Body: CreateOrderInp
             quantidade,
             precoTotal
         });
+
+        const conexaoRabbit = await amqp.connect("amqp://localhost");
+        const canal = await conexaoRabbit.createChannel();
+        await canal.assertQueue("fila_pedidos");
+        await canal.sendToQueue("fila_pedidos", Buffer.from(JSON.stringify(novoPedido)));
 
         return reply.status(201).send({
             data: novoPedido,
