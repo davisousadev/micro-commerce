@@ -20,11 +20,11 @@ app.register(async (produtosInstance) => {
     base: "http://localhost:3001",
   });
 
-  produtosInstance.all("/produtos", (request, reply) => {
+  produtosInstance.all("/products", (request, reply) => {
     reply.from(request.url);
   });
 
-  produtosInstance.all("/produtos/*", (request, reply) => {
+  produtosInstance.all("/products/*", (request, reply) => {
     reply.from(request.url);
   });
 });

@@ -1,0 +1,19 @@
+{
+  "name": "product-service",
+  "version": "1.0.0",
+  "main": "server.js",
+  "license": "MIT",
+  "dependencies": {
+    "fastify": "^5.10.0",
+    "fastify-type-provider-zod": "^7.0.0",
+    "mongoose": "^9.7.4",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "tsx": "^4.23.0"
+  },
+  "scripts": {
+    "dev": "tsx watch server.ts"
+  }
+}
