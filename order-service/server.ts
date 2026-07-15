@@ -13,7 +13,7 @@ fastify.register(orderRoutes);
 const start = async () => {
     try {
         await connectDatabase();
-        await fastify.listen({ port: 3002 });
+        await fastify.listen({ port: 3002, host: '0.0.0.0' });
         console.log('🛒 Order Service rodando em http://localhost:3002');
     } catch (err) {
         fastify.log.error(err);

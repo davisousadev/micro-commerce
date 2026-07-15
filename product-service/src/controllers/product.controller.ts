@@ -1,5 +1,5 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { Product } from "../db/schema";
+import { Product } from "../model/schema";
 import { CreateProductSchema, UpdateProductSchema, DeleteProductSchema } from "../schemas/product.schema";
 
 export const createProduct = async (

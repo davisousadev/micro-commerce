@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: senha_secreta
+      POSTGRES_DB: orders_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  products-service:
+    build: ./product-service
+    container_name: products-service
+    environment:
+      MONGO_URI: mongodb://mongodb:27017/product_db
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mongodb
+
+  orders-service:
+    build: ./order-service
+    container_name: orders-service
+    environment:
+      DB_HOST: postgres
+      RABBITMQ_URL: amqp://rabbitmq
+      PRODUCT_SERVICE_URL: http://products-service:3001
+    ports:
+      - "3002:3002"
+    depends_on:
+      - postgres
+      - rabbitmq
+
+  notifications-service:
+    build: ./notification-service
+    container_name: notifications-service
+    environment:
+      RABBIT_HOST: rabbitmq
+    depends_on:
+      - rabbitmq
+
+  api-gateway:
+    build: ./api-getway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - products-service
+      - orders-service
+
+volumes:
+  mongodb_data:
+  postgres_data:
+  rabbitmq_data:
